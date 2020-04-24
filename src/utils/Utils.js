@@ -429,38 +429,44 @@ export default class Utils {
       time += dt
       lasttime = now
 
-      const interpolationFactor = 24
-
-      const trackedMatrix = {
-        // for interpolation
-        delta: [
-          0, 0, 0, 0,
-          0, 0, 0, 0,
-          0, 0, 0, 0,
-          0, 0, 0, 0
-        ],
-        interpolated: [
-          0, 0, 0, 0,
-          0, 0, 0, 0,
-          0, 0, 0, 0,
-          0, 0, 0, 0
-        ]
-      }
+      let workerFilter
 
       if (!world) {
         root.visible = false
       } else {
         root.visible = true
 
-        // interpolate matrix
-        for (let i = 0; i < 16; i++) {
-          trackedMatrix.delta[i] = world[i] - trackedMatrix.interpolated[i]
-          trackedMatrix.interpolated[i] =
-                    trackedMatrix.interpolated[i] +
-                    trackedMatrix.delta[i] / interpolationFactor
+        workerFilter = new Worker('../src/utils/workerFilter.js')
+
+        workerFilter.postMessage({ type: 'filter', world: JSON.stringify(world) })
+
+        workerFilter.onmessage = (e) => {
+          const msg = e.data
+          if (msg.type === 'postfilter') {
+            setM(msg)
+          }
         }
-        // set matrix of 'root' by detected 'world' matrix
-        this.setMatrix(root.matrix, trackedMatrix.interpolated)
+        const setM = (msg) => {
+          const setMx = (matrix, value) => {
+            const array = []
+            for (const key in value) {
+              array[key] = value[key]
+            }
+            console.log(typeof matrix.elements.set)
+            if (typeof matrix.elements.set === 'function') {
+              console.log('set')
+              matrix.elements.set(array)
+            } else {
+              console.log('slice')
+              matrix.elements = [].slice.call(array)
+            }
+          }
+
+          const tracked = JSON.parse(msg.tracked)
+
+          // set matrix of 'root' by detected 'world' matrix
+          setMx(root.matrix, tracked)
+        }
       }
 
       renderer.render(scene, camera)
@@ -480,9 +486,12 @@ export default class Utils {
     for (const key in value) {
       array[key] = value[key]
     }
+    console.log(matrix.elements.set)
     if (typeof matrix.elements.set === 'function') {
+      console.log('set');
       matrix.elements.set(array)
     } else {
+      console.log('slice');
       matrix.elements = [].slice.call(array)
     }
   };
