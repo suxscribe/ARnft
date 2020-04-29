@@ -2,9 +2,6 @@ import axios from 'axios'
 import Worker from './Worker.js'
 
 export default class Utils {
-  constructor () {
-  }
-
   static getUserMedia (container, markerUrl, video, canvas, root, statsObj, configData) {
     const facing = configData.videoSettings.facingMode || 'environment'
 
@@ -179,6 +176,7 @@ export default class Utils {
     const light = new THREE.AmbientLight(0xffffff)
     scene.add(light)
 
+    root.matrixAutoUpdate = false
     scene.add(root)
 
     const load = () => {
@@ -328,13 +326,15 @@ export default class Utils {
 
         // interpolate matrix
         for (let i = 0; i < 16; i++) {
-          trackedMatrix.delta[i] = world[i] - trackedMatrix.interpolated[i]
           trackedMatrix.interpolated[i] =
                     trackedMatrix.interpolated[i] +
-                    trackedMatrix.delta[i] / interpolationFactor
+                    (world[i] - trackedMatrix.interpolated[i]) / interpolationFactor
         }
+        console.log(world)
+        console.log(trackedMatrix.interpolated);
         // set matrix of 'root' by detected 'world' matrix
-        this.setMatrix(root.matrix, trackedMatrix.interpolated)
+        this.setMatrix(root.matrix, world)
+        root.matrixAutoUpdate = false
       }
 
       renderer.render(scene, camera)

@@ -65,6 +65,8 @@ export default class ARnft {
       obj.position.y = (msg.height / msg.dpi * 2.54 * 10) / 2.0
       obj.position.x = (msg.width / msg.dpi * 2.54 * 10) / 2.0
     })
+    obj.visible = true
+    root.matrixAutoUpdate = false
     root.add(obj)
   }
 
