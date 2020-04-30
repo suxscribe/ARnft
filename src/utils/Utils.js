@@ -176,7 +176,6 @@ export default class Utils {
     const light = new THREE.AmbientLight(0xffffff)
     scene.add(light)
 
-    root.matrixAutoUpdate = false
     scene.add(root)
 
     const load = () => {
@@ -301,40 +300,13 @@ export default class Utils {
       time += dt
       lasttime = now
 
-      const interpolationFactor = 24
-
-      const trackedMatrix = {
-        // for interpolation
-        delta: [
-          0, 0, 0, 0,
-          0, 0, 0, 0,
-          0, 0, 0, 0,
-          0, 0, 0, 0
-        ],
-        interpolated: [
-          0, 0, 0, 0,
-          0, 0, 0, 0,
-          0, 0, 0, 0,
-          0, 0, 0, 0
-        ]
-      }
-
       if (!world) {
         root.visible = false
       } else {
         root.visible = true
 
-        // interpolate matrix
-        for (let i = 0; i < 16; i++) {
-          trackedMatrix.interpolated[i] =
-                    trackedMatrix.interpolated[i] +
-                    (world[i] - trackedMatrix.interpolated[i]) / interpolationFactor
-        }
-        console.log(world)
-        console.log(trackedMatrix.interpolated);
         // set matrix of 'root' by detected 'world' matrix
         this.setMatrix(root.matrix, world)
-        root.matrixAutoUpdate = false
       }
 
       renderer.render(scene, camera)

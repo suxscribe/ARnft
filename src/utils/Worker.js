@@ -47,7 +47,7 @@
         const cameraMatrix = ar.getCameraMatrix()
 
         ar.addEventListener('getNFTMarker', (ev) => {
-          markerResult = { type: 'found', matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH), proj: JSON.stringify(cameraMatrix) }
+          markerResult = { type: 'found', matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH) }
         })
         // after the ARController is set up, we load the NFT Marker
         const regexM = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)/igm
