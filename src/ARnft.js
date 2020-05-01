@@ -58,7 +58,7 @@ export default class ARnft {
   }
 
   add (obj) {
-    let root = this.root
+    const root = this.root
     document.addEventListener('getNFTData', (ev) => {
       // console.log(ev)
       var msg = ev.detail

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import Worker from './Worker.js'
+import * as THREE from 'three'
 
 export default class Utils {
   static getUserMedia (container, markerUrl, video, canvas, root, statsObj, configData) {
@@ -290,7 +291,7 @@ export default class Utils {
 
     const tick = () => {
       draw()
-      requestAnimationFrame(tick)
+      window.requestAnimationFrame(tick)
     }
 
     const draw = () => {
